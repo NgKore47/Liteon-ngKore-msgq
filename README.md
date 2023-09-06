@@ -18,7 +18,7 @@
 1. [Prerequisites](#1-prerequisites)
   - 1.1 [DPDK(Data Plane Development Kit) 20.05](#11-dpdkdata-plane-development-kit-2005)
   - 1.2 [Grub Configuration update](#12-grub-configuration-update)
-  - 1.3 [1.3 OSC-PHY installation](#13-osc-phy-installation)
+  - 1.3 [OSC-PHY installation](#13-osc-phy-installation)
 2. [Build OAI gNB](#2-build-oai-gnb)
 3. [Linux PTP installation](#3-linux-ptp-installation)
 4. [SCTP](#4-sctp)
