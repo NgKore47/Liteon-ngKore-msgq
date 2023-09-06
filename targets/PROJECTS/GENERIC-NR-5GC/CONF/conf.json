@@ -1,8 +1,8 @@
 {
     "GLOBAL": {
         "io_cfg": {
-            "dpdk_dev_up":          "0000:12:02.0",
-            "dpdk_dev_cp":          "0000:12:02.1",
+            "dpdk_dev_up":          "0000:18:02.0",
+            "dpdk_dev_cp":          "0000:18:02.1",
             "bbdev_mode":           "none",
             "system_core":          0,
             "core":                 1,
@@ -15,7 +15,7 @@
             "dpdkBasebandDevice":   "",
             "mtu":                  8870,
             "o_du_macaddr":         "00:11:22:33:44:66",
-            "o_ru_macaddr":         "00:aa:ff:bb:ff:cc",
+            "o_ru_macaddr":         "e8:c7:4f:1e:c7:3b",
             "cp_vlan_tag":          564,
             "up_vlan_tag":          564
             },
