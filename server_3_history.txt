@@ -1,0 +1,439 @@
+[three@three ~]$ cat .bash_history 
+ifconfig
+ls
+ifconfig
+ls
+sudo su
+ls
+uname -r
+history
+sudo su
+uname -r
+sudo tuned-adm profile realtime
+uname -r
+sudo vim /etc/default/grub 
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+sudo reboot
+uname -r
+sudo tuned-adm profile realtime
+grep HugePages /proc/meminfo
+ sudo cpupower idle-set -D 0
+tuned-adm profile realtime
+sudo tuned-adm profile realtime
+uname -r
+sudo yum update
+gcc version
+gcc --version
+g++ --version
+make version
+make --version
+git clone http://git.code.sf.net/p/linuxptp/code linuxptp
+git checkout v2.0
+cd linuxptp/
+git checkout v2.0
+make && make install
+sudo make && make install
+sudo make install
+cd
+sudo apt install wget xz-utils
+sudo dnf install wget xz-utils
+wget http://fast.dpdk.org/rel/dpdk-20.11.7.tar.xz
+ls
+sudo dnf install meson
+meson --version
+sudo yum install meson
+sudo yum install python3-pip
+sudo pip3 install meson==0.58.2
+tar xvf dpdk-20.11.7.tar.xz
+ls
+cd dpdk-stable-20.11.7/
+ls
+meson build
+ls
+rm -rf build
+ls
+wget  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/ninja-build-1.8.2-1.el9.x86_64.rpm
+wget https://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/ninja-build-1.10.2-6.el9.x86_64.rpm
+sudo dnf localinstall ninja-build-1.10.2-6.el9.x86_64.rpm 
+meson build
+$nproc
+nproc
+echo $nproc
+echo $(nproc)
+top
+htop
+lscpu -e
+lscpu -n
+ninja -C build -j60
+sudo ninja install -C build
+sudo ldconfig -v | grep rte
+uname -r
+cd
+git clone https://gitlab.eurecom.fr/oai/openairinterface5g.git ~/openairinterface5g
+cd openairinterface5g/
+ls
+git checkout use_msgq_new_fhidriver_build_fix
+ls cmake_targets/tools/oran_fhi_integration_patches/
+cd
+git clone https://gerrit.o-ran-sc.org/r/o-du/phy.git ~/phy
+cd phy/
+ls
+git checkout oran_release_bronze_v1.1
+cp ~/openairinterface5g/cmake_targets/tools/oran_fhi_integration_patches/oran-fhi-*.patch .
+ls
+git apply oran-fhi-1-compile-libxran-using-gcc-and-disable-avx512.patch
+git apply oran-fhi-2-return-correct-slot_id.patch
+git apply oran-fhi-3-disable-pkt-validate-at-process_mbuf.patch
+git apply oran-fhi-4-process_all_rx_ring.patch
+git apply oran-fhi-5-remove-not-used-dependencies.patch
+export XRAN_LIB_DIR=~/phy/fhi_lib/lib/build
+export XRAN_DIR=~/phy/fhi_lib
+export RTE_SDK=~/dpdk-stable-20.11.7
+export RTE_TARGET=x86_64-native-linuxapp-gcc
+export RTE_INCLUDE=${RTE_SDK}/${RTE_TARGET}/include
+cd
+vim ~/.bashrc 
+source ~/.bashrc 
+cd phy/fhi_lib/
+ls
+./build.sh LIB_XRAN_SO
+cd 
+cd openairinterface5g/cmake_targets/
+sudo dnf install -y numactl-devel
+./build_oai --gNB --ninja -t oran_fhlib_5g -I
+l
+ls
+sudo yum install guile
+sudo yum -y groupinstall "Development Tools"
+cd
+sudo dnf -y groupinstall "Development Tools"
+wget https://dl.rockylinux.org/pub/rocky/9/CRB/x86_64/os/Packages/g/gc-devel-8.0.4-7.el9.x86_64.rpm
+history
+sudo dnf localinstall gc-devel-8.0.4-7.el9.x86_64.rpm 
+sudo subscription-manager repos --enable codeready-builder-for-rhel-9-x86_64-rpm
+wget https://dl.rockylinux.org/pub/rocky/8/PowerTools/x86_64/os/Packages/guile-devel-2.0.14-7.el8.x86_64.rpm
+ls
+wget  https://vault.centos.org/centos/8/PowerTools/x86_64/os/Packages/guile-devel-2.0.14-7.el8.x86_64.rpm
+sudo yum localinstall guile-devel-2.0.14-7.el8.x86_64.rpm
+wget https://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/libconfig-devel-1.7.2-9.el9.x86_64.rpm
+sudo dnf localinstall libconfig-devel-1.7.2-9.el9.x86_64.rpm v
+sudo dnf localinstall libconfig-devel-1.7.2-9.el9.x86_64.rpm 
+wget https://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/lapack-devel-3.9.0-8.el9.x86_64.rpm
+ls
+sudo dnf localinstall lapack-devel-3.9.0-8.el9.x86_64.rpm
+wget https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/Packages/pkgconf-pkg-config-1.7.3-9.el9.x86_64.rpm
+sudo dnf localinstall pkgconf-pkg-config-1.7.3-9.el9.x86_64 
+wget https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/Packages/pkgconf-pkg-config-1.7.3-10.el9.x86_64.rpm
+sudo dnf localinstall pkgconf-pkg-config-1.7.3-10.el9.x86_64.rpm
+ls
+rm pkgconf-pkg-config-1.7.3-9.el9.x86_64.rpm
+ls
+wget https://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/blas-devel-3.9.0-8.el9.x86_64.rpm
+sudo dnf localinstall blas-devel-3.9.0-8.el9.x86_64.rpm
+sudo dnf --enablerepo=crb install blas-devel
+wget https://mirror.stream.centos.org/9-stream/CRB/x86_64/os/Packages/blas-devel-3.9.0-10.el9.x86_64.rpm
+sudo dnf localinstall blas-devel-3.9.0-10.el9.x86_64.rpm
+sudo dnf localinstall lapack-devel-3.9.0-8.el9.x86_64.rpm
+history
+subscription-manager repos --list
+sudo subscription-manager repos --enable codeready-builder-for-rhel-9-x86_64-rpms
+sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+sudo dnf update
+sudo dnf install guile-devel
+sudo dnf install guile30
+ls
+sudo dnf localinstall blas-devel-3.9.0-10.el9.x86_64.rpm
+sudo dnf localinstall blas-devel-3.9.0-8.el9.x86_64.rpm
+rm blas-devel-3.9.0-10.el9.x86_64.rpm
+ls
+sudo dnf install lapack-devel-3.9.0-8.el9.x86_64.rpm
+sudo dnf localinstall pkgconf-pkg-config-1.7.3-10.el9.x86_64.rpm
+cd openairinterface5g/
+cd cmake_targets/
+history
+./build_oai --gNB --ninja -t oran_fhlib_5g -I
+cd ran_build/build/
+ls
+cp ~/phy/fhi_lib/lib/build/libxran.so ~/openairinterface5g/cmake_targets/ran_build/build
+ls
+wget -O ~/oai-cn5g.zip https://gitlab.eurecom.fr/oai/openairinterface5g/-/archive/develop/openairinterface5g-develop.zip?path=doc/tutorial_resources/oai-cn5g
+unzip ~/oai-cn5g.zip
+mv ~/openairinterface5g-develop-doc-tutorial_resources-oai-cn5g/doc/tutorial_resources/oai-cn5g ~/oai-cn5g
+rm -r ~/openairinterface5g-develop-doc-tutorial_resources-oai-cn5g ~/oai-cn5g.zip
+docker pull mysql:8.0
+docker pull oaisoftwarealliance/oai-amf:v1.5.1
+docker pull oaisoftwarealliance/oai-nrf:v1.5.1
+docker pull oaisoftwarealliance/oai-smf:v1.5.1
+docker pull oaisoftwarealliance/oai-udr:v1.5.1
+docker pull oaisoftwarealliance/oai-udm:v1.5.1
+docker pull oaisoftwarealliance/oai-ausf:v1.5.1
+docker pull oaisoftwarealliance/oai-spgwu-tiny:v1.5.1
+docker pull oaisoftwarealliance/trf-gen-cn5g:latest
+docker build --target ims --tag asterisk-ims:latest --file ~/oai-cn5g/Dockerfile .
+cd oai-cn5g/
+ls
+docker compose up -d
+docker ps
+cd
+tcpdump
+sudo tcpdump
+sudo tcpdump -i ens1f0 -w new_branch_du_ens1f0.pcap
+sudo su
+ls
+cd openairinterface5g/targets/PROJECTS/GENERIC-NR-5GC/CONF/
+ls
+cd o-ran-dat-files
+ls
+vim config_o_du_static_vvdn.dat 
+ls
+cd
+sudo su
+history
+sudo dmesg
+ls
+scp new_branch_du_ens1f0.pcap aditya@192.168.1.101:~/
+sudo dmesg
+cd openairinterface5g/targets/PROJECTS/GENERIC-NR-5GC/CONF/
+ls
+cd o-ran-dat-files/
+vim config_o_du_static_vvdn.dat 
+cp config_o_du_static_vvdn.dat ~/
+vim config_o_du_static_vvdn.dat 
+cd openairinterface5g/targets/PROJECTS/GENERIC-NR-5GC/CONF/
+ls
+vim oran.fh.band78.fr1.273PRB.conf
+cd
+cd openairinterface5g/targets/PROJECTS/GENERIC-NR-5GC/
+cd CONF/
+ls
+cd o-ran-dat-files/
+vim config_o_du_static_vvdn.dat 
+sudo modprobe vfio_pci
+#0000:18:02.0
+vim config_o_du_static_vvdn.dat 
+cd
+sudo yum update -y
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum remove podman
+sudo yum remove buildah
+sudo yum install -y docker-ce
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo docker --version
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+sudo usermod -aG docker $USER
+sudo chmod 666 /var/run/docker.sock
+docker ps
+ls
+cd openairinterface5g/cmake_targets/ran_build/build/
+ls
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+ls
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+sudo dmesg
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+history
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+ifconfig
+sudo ifconfig ens7f1 mtu 8870
+ifconfig
+sudo ifconfig ens1f0 mtu 8870
+ifconfig
+sudo ifconfig ens1f0 mtu 1500
+sudo su
+sudo /usr/local/bin/dpdk-devbind.py -s
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.1
+sudo /usr/local/bin/dpdk-devbind.py -s
+cd openairinterface5g/targets/PROJECTS/GENERIC-NR-5GC/CONF/
+ls
+vim oran.fh.band78.fr1.273PRB.conf
+lscpu -e
+numactl
+numactl -a
+numactl --all
+numactl --hardware
+vim /etc/default/grub 
+top
+cd 
+cd linuxptp/
+cd configs/
+vim new_liteon.cfg
+cd ..
+sudo ./ptp4l -i ens1f0 -m -H -2 -s -f configs/new_liteon.cfg 
+history
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.1
+sudo ./ptp4l -i ens1f0 -m -H -2 -s -f configs/new_liteon.cfg 
+cd linuxptp/
+sudo ./phc2sys -w -m -s ens1f0 -R 8 -f configs/new_liteon.cfg 
+cd linuxptp/
+history
+sudo ./ptp4l -i ens1f0 -m -H -2 -s -f configs/new_liteon.cfg
+exit
+ls
+cd linuxptp/
+history
+sudo ./phc2sys -w -m -s ens1f0 -R 8 -f configs/new_liteon.cfg
+exit
+sudo su
+history
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.1
+ls
+sudo su
+history
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.1
+sudo dmesg
+exit
+ip a
+sudo shutdown now
+ls
+sudo shutdown now
+sudo reboot now
+sudo shutdown now
+ip a
+0
+ip a
+sudo reboot now
+ip a
+ls
+sudo nmap -sP
+ssh four@192.168.1.161
+ping 10.8.0.24
+ping 10.8.0.34
+ping 10.8.0.24
+ssh four@192.168.1.161
+ls
+grep HugePages /proc/meminfo
+l
+ls
+cd openairinterface5g/targets/PROJECTS/GENERIC-NR-5GC/CONF/
+ls
+cd o-ran-dat-files/
+ls
+vim config_o_du_static_vvdn.dat 
+cd ..
+ls
+vim  oran.fh.band78.fr1.273PRB.conf
+cd o-ran-dat-files/
+ls
+vim config_o_du_static_vvdn.dat 
+ls
+cd
+ls
+ifconfi
+ifconfig
+tuned-adm profile realtime
+sudo tuned-adm profile realtime
+cd linuxptp/
+docker ps
+docker restart $(docker ps -a -q)
+docker ps
+sudo ./ptp4l -i ens1f0 -m -H -2 -s -f configs/new_liteon.cfg
+sudo /usr/local/bin/dpdk-devbind.py -s
+cd linuxptp/
+sudo ./phc2sys -w -m -s ens1f0 -R 8 -f configs/new_liteon.cfg
+sudo su
+history
+ sudo /usr/local/bin/dpdk-devbind.py -s
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+modrpbe vfio-pci
+sudo modprobe vfio-pci
+sudo modprobe sctp
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.1
+ sudo /usr/local/bin/dpdk-devbind.py -s
+sudo dmesg
+sudo su
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.1
+sudo su
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.1
+sudo dmesg
+sudo su
+history
+sudo /usr/local/bin/dpdk-devbind.py -s
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.0
+sudo /usr/local/bin/dpdk-devbind.py --bind vfio-pci 0000:18:02.1
+sudo su
+cd openairinterface5g/cmake_targets/ran_build/build/
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+cd -
+cd openairinterface5g/targets/PROJECTS/GENERIC-NR-5GC/CONF/
+ls
+cd o-ran-dat-files/
+ls
+vim config_o_du_static_vvdn.dat 
+cd ~/openairinterface5g/cmake_targets/ran_build/build/
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+cd -
+ls
+vim liteon_config_o_du_static_vvdn.dat 
+vim config_o_du_static_vvdn.dat 
+mv config_o_du_static_vvdn.dat new_oai_config_o_du_static_vvdn.dat 
+mv liteon_config_o_du_static_vvdn.dat  config_o_du_static_vvdn.dat
+ls
+cd -
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+cd -
+ls
+vim config_o_du_static_vvdn.dat 
+cd -
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+cd -
+vim config_o_du_static_vvdn.dat 
+cd -
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+cd -
+vim config_o_du_static_vvdn.dat 
+cd -
+sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/oran.fh.band78.fr1.273PRB.conf --sa --reorder-thread-disable --thread-pool 1,3,5,7,9,11,13,15
+sudo tcpdump -i any 
+top
+clera
+clear
+history
+ls
+history
+ls
+sudo ldconfig -v | grep rte_
+ls
+scp gc-devel-8.0.4-7.el9.x86_64.rpm two@192.168.1.197:~/
+history
+ls
+history
+ls
+scp libconfig-devel-1.7.2-9.el9.x86_64.rpm two@192.168.1.197:~/
+scp pkgconf-pkg-config-1.7.3-10.el9.x86_64.rpm  two@192.168.1.197:~/
+ls
+scp blas-devel-3.9.0-8.el9.x86_64.rpm   two@192.168.1.197:~/
+scp lapack-devel-3.9.0-8.el9.x86_64.rpm   two@192.168.1.197:~/
+history
+ls /usr/local/include/
+sudo su
+mkdir rte
+sudo su
+ls
+rm -rf rte/
+sudo rm -rf rte/
+ls
+mkdir rte
+cd /usr/local/include/
+ls
+cp -r ./* ~/rte/
+cd -
+ls
+cd rte/
+ls
+cd ..
+scp -r rte/   two@192.168.1.197:~/
+cd openairinterface5g/targets/PROJECTS/GENERIC-NR-5GC/CONF/
+ls
+vim oran.fh.band78.fr1.273PRB.conf
+sudo python3 /usr/local/bin/dpdk-devbind.py -s
