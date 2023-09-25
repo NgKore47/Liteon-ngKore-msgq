@@ -21,13 +21,17 @@
 
 
 #include <stdio.h>
+#include <string.h>
 #include "common_lib.h"
 #include "ethernet_lib.h"
 #include "oran_isolate.h"
+#include "xran_fh_o_du.h"
 
 #include "common/utils/LOG/log.h"
 #include "common/utils/LOG/vcd_signal_dumper.h"
 #include "openair1/PHY/defs_gNB.h"
+#include "common/utils/threadPool/thread-pool.h"
+#include "oaioran.h"
 
 typedef struct {
   eth_state_t           e;
@@ -36,6 +40,7 @@ typedef struct {
   void                  *oran_priv;
 } oran_eth_state_t;
 
+notifiedFIFO_t oran_sync_fifo;
 
 int trx_oran_start(openair0_device *device)
 {
@@ -45,14 +50,13 @@ int trx_oran_start(openair0_device *device)
   oran_eth_state_t *s = device->priv;
 
   // Start ORAN
-   if ( start_oran(s->oran_priv) !=0 ){
+   if ( xran_start(s->oran_priv) !=0 ){
       printf("%s:%d:%s: Start ORAN failed ... Exit\n",
          __FILE__, __LINE__, __FUNCTION__);
       exit(1); 
    }else{
       printf("Start ORAN. Done\n");
    }
-
   return 0;
 }
 
@@ -61,8 +65,7 @@ void trx_oran_end(openair0_device *device)
 {
   printf("ORAN: %s\n", __FUNCTION__);
   oran_eth_state_t *s = device->priv;
-  stop_oran(s->oran_priv);
-  close_oran(s->oran_priv);
+  xran_close(s->oran_priv);
 }
 
 
@@ -70,7 +73,7 @@ int trx_oran_stop(openair0_device *device)
 {
   printf("ORAN: %s\n", __FUNCTION__);
   oran_eth_state_t *s = device->priv;
-  stop_oran(s->oran_priv);
+  xran_stop(s->oran_priv);
   return(0);
 }
 
@@ -218,25 +221,27 @@ void oran_fh_if4p5_south_in(RU_t *ru,
   RU_proc_t *proc = &ru->proc;
   extern uint16_t sl_ahead;
   int f, sl;
-
-  int ret = xran_fh_rx_read_slot(s->oran_priv, &ru_info, &f, &sl, *frame, *slot, sync);
-
+  start_meas(&ru->rx_fhaul);
+  int ret = xran_fh_rx_read_slot(&ru_info, &f, &sl);
+  stop_meas(&ru->rx_fhaul);
+  LOG_D(PHY,"Read %d.%d\n",f,sl);
   if (ret != 0){
-     printf("ORAN: ORAN_fh_if4p5_south_in ERROR in RX function \n");
+     printf("ORAN: %d.%d ORAN_fh_if4p5_south_in ERROR in RX function \n",f,sl);
   }
 
   proc->tti_rx       = sl;
   proc->frame_rx     = f;
   proc->tti_tx       = (sl+sl_ahead)%20;
   proc->frame_tx     = (sl>(19-sl_ahead)) ? (f+1)&1023 : f;
+
   if (proc->first_rx == 0) {
     if (proc->tti_rx != *slot) {
-      LOG_E(PHY,"Received Timestamp doesn't correspond to the time we think it is (proc->frame_rx.proc->tti_rx %d.%d, slot %d)\n",proc->frame_rx,proc->tti_rx,*slot);
+      LOG_E(PHY,"Received Time doesn't correspond to the time we think it is (slot mismatch, received %d.%d, expected %d.%d)\n",proc->frame_rx,proc->tti_rx,*frame,*slot);
       *slot = proc->tti_rx;
     }
 
     if (proc->frame_rx != *frame) {
-      LOG_E(PHY,"Received Timestamp doesn't correspond to the time we think it is (proc->frame_rx %d frame %d proc->tti_rx %d tti %d)\n",proc->frame_rx,*frame,proc->tti_rx,*slot);
+      LOG_E(PHY,"Received Time doesn't correspond to the time we think it is (frame mismatch, %d.%d , expected %d.%d)\n",proc->frame_rx,proc->tti_rx,*frame,*slot);
       *frame=proc->frame_rx;
     }
   } else {
@@ -257,16 +262,17 @@ void oran_fh_if4p5_south_out(RU_t *ru,
 {
   openair0_device *device = &ru->ifdevice;
   oran_eth_state_t *s = device->priv;
-
+  start_meas(&ru->tx_fhaul);
   ru_info_t ru_info;
   ru_info.nb_tx = ru->nb_tx;
   ru_info.txdataF_BF = ru->common.txdataF_BF;
 //printf("south_out:\tframe=%d\tslot=%d\ttimestamp=%ld\n",frame,slot,timestamp);
 
-  int ret = xran_fh_tx_send_slot(s->oran_priv, &ru_info, frame, slot, timestamp);
+  int ret = xran_fh_tx_send_slot(&ru_info, frame, slot, timestamp);
   if (ret != 0){
      printf("ORAN: ORAN_fh_if4p5_south_out ERROR in TX function \n");
   }
+  stop_meas(&ru->tx_fhaul);
 }
 
 
@@ -280,6 +286,27 @@ void *get_internal_parameter(char *name)
     return (void *) oran_fh_if4p5_south_out;
 
   return NULL;
+}
+
+
+
+void make_args(char **argv, int *argc, char *string)
+{
+  char tmp[1024]={0x0};
+  FILE *cmd=NULL;
+  int i=0;
+  char *p=NULL;
+											
+  sprintf(tmp, "set - %s && for i in %c$@%c;\n do\n echo $i\ndone",string, '"', '"');
+  cmd=popen(tmp, "r");
+  while (fgets(tmp, sizeof(tmp), cmd)!=NULL)
+  {
+    p=strchr(tmp, '\n');
+    if (p!=NULL) *p=0x0;
+    argv[i] = malloc(strlen(tmp));
+    strcpy(argv[i++], tmp);
+  }
+  *argc=i;
 }
 
 
@@ -318,7 +345,7 @@ int transport_init(openair0_device *device,
   eth->e.flags = ETH_RAW_IF4p5_MODE;
   eth->e.compression = NO_COMPRESS;
   eth->e.if_name = eth_params->local_if_name;
-  eth->oran_priv = define_oran_pointer(); 
+  eth->oran_priv = NULL;//define_oran_pointer(); 
   device->priv = eth;
   device->openair0_cfg=&openair0_cfg[0];
 
@@ -328,36 +355,16 @@ int transport_init(openair0_device *device,
 
   printf("ORAN: %s\n", __FUNCTION__);
 
-   // Check if the machine is PTP sync
-   check_xran_ptp_sync();
+  // Check if the machine is PTP sync
+  check_xran_ptp_sync();
 
-   // SetUp
-   if ( setup_oran(s->oran_priv) !=0 ){ 
-      printf("%s:%d:%s: SetUp ORAN failed ... Exit\n",
-         __FILE__, __LINE__, __FUNCTION__);
-      exit(1);       
-   }else{
-      printf("SetUp ORAN. Done\n");
-   }
-
-   // Dump ORAN config
-   dump_oran_config(s->oran_priv);
-   
-   // Register physide callbacks
-   register_physide_callbacks(s->oran_priv);
-   printf("Register physide callbacks. Done\n");
-
-   // Open callbacks
-   open_oran_callback(s->oran_priv);
-   printf("Open Oran callbacks. Done\n");
-
-   // Init ORAN
-   initialize_oran(s->oran_priv);
-   printf("Init Oran. Done\n");
-
-   // Open ORAN
-   open_oran(s->oran_priv);
-   printf("xran_open. Done\n");
-
+  int argc;
+  char *argv[20]={0x0};
+  make_args(&argv,&argc,openair0_cfg->sdr_addrs);
+  for (int c=0;c<argc;c++) 
+    printf("Running oran with param %d : %s\n",c,argv[c]);
+  initNotifiedFIFO(&oran_sync_fifo);
+  eth->oran_priv = oai_main(argc,argv);
+  // create message queues for ORAN sync
   return 0;
 }

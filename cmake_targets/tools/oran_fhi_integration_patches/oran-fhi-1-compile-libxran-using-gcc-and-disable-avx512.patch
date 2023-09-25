@@ -9,15 +9,41 @@ Subject: [PATCH 1/4] compile libxran using-gcc and disable avx512
  2 files changed, 16 insertions(+), 14 deletions(-)
 
 diff --git a/fhi_lib/build.sh b/fhi_lib/build.sh
-index 22859b5..575bcc5 100755
+index 22859b5..a814ad4 100755
 --- a/fhi_lib/build.sh
 +++ b/fhi_lib/build.sh
-@@ -70,11 +70,12 @@ echo "LIBXRANSO = ${LIBXRANSO}"
+@@ -24,7 +24,7 @@ trap 'echo "\"${l_c}\" command exited with code $?."' EXIT
+ XRAN_FH_LIB_DIR=$XRAN_DIR/lib
+ XRAN_FH_APP_DIR=$XRAN_DIR/app
+ XRAN_FH_TEST_DIR=$XRAN_DIR/test/test_xran
+-LIBXRANSO=0
++LIB_XRAN_SO=0
+ MLOG=0
+ COMMAND_LINE=
+ 
+@@ -35,8 +35,8 @@ key="$1"
+ 
+ #echo Parsing: $key
+ case $key in
+-    LIBXRANSO)
+-    LIBXRANSO=1
++    LIB_XRAN_SO)
++    LIB_XRAN_SO=1
+     ;;
+     MLOG)
+     MLOG=1
+@@ -66,15 +66,16 @@ else
+ fi
+ 
+ echo 'Building xRAN Library'
+-echo "LIBXRANSO = ${LIBXRANSO}"
++echo "LIB_XRAN_SO = ${LIB_XRAN_SO}"
  echo "MLOG      = ${MLOG}"
  
  cd $XRAN_FH_LIB_DIR
+-make $COMMAND_LINE MLOG=${MLOG} LIBXRANSO=${LIBXRANSO} #DEBUG=1 VERBOSE=1
 +make clean
- make $COMMAND_LINE MLOG=${MLOG} LIBXRANSO=${LIBXRANSO} #DEBUG=1 VERBOSE=1
++make $COMMAND_LINE MLOG=${MLOG} XRAN_LIB_SO=${LIB_XRAN_SO} #DEBUG=1 VERBOSE=1
  
 -echo 'Building xRAN Test Application'
 -cd $XRAN_FH_APP_DIR

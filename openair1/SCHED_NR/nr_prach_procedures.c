@@ -31,7 +31,6 @@
  */
 
 #include "PHY/defs_gNB.h"
-#include "PHY/phy_extern.h"
 #include "PHY/NR_TRANSPORT/nr_transport_proto.h"
 #include "nfapi_nr_interface_scf.h"
 #include "fapi_nr_l1.h"
@@ -43,8 +42,6 @@
 #include "assertions.h"
 
 #include <time.h>
-
-#include "intertask_interface.h"
 
 extern uint8_t nfapi_mode;
 
@@ -183,7 +180,7 @@ void L1_nr_prach_procedures(PHY_VARS_gNB *gNB,int frame,int slot) {
 	gNB->prach_pdu_indication_list[pdu_index].num_preamble                        = 1;
 	gNB->prach_pdu_indication_list[pdu_index].preamble_list                       = gNB->preamble_list;
 	gNB->prach_pdu_indication_list[pdu_index].preamble_list[0].preamble_index     = max_preamble[0];
-	gNB->prach_pdu_indication_list[pdu_index].preamble_list[0].timing_advance     = 0; /*max_preamble_delay[0];*/
+	gNB->prach_pdu_indication_list[pdu_index].preamble_list[0].timing_advance     = max_preamble_delay[0];
 	gNB->prach_pdu_indication_list[pdu_index].preamble_list[0].preamble_pwr       = 0xffffffff;
 	pdu_index++;
       }

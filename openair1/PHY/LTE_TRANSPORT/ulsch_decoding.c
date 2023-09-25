@@ -41,7 +41,6 @@
 #include "RRC/LTE/rrc_extern.h"
 #include "PHY_INTERFACE/phy_interface.h"
 #include "transport_proto.h"
-#include <executables/split_headers.h>
 
 extern int oai_exit;
 
@@ -114,6 +113,7 @@ LTE_eNB_ULSCH_t *new_eNB_ulsch(uint8_t max_turbo_iterations,uint8_t N_RB_UL, uin
 
       if (ulsch->harq_processes[i]) {
         memset(ulsch->harq_processes[i],0,sizeof(LTE_UL_eNB_HARQ_t));
+        init_abort(&ulsch->harq_processes[i]->abort_decode);
         ulsch->harq_processes[i]->decodedBytes = (uint8_t *)malloc16(MAX_ULSCH_PAYLOAD_BYTES/bw_scaling);
 
         if (ulsch->harq_processes[i]->decodedBytes)
@@ -282,11 +282,21 @@ void processULSegment(void * arg) {
                                             &eNB->ulsch_tc_gamma_stats,
                                             &eNB->ulsch_tc_ext_stats,
                                             &eNB->ulsch_tc_intl1_stats,
-                                            &eNB->ulsch_tc_intl2_stats);
+                                            &eNB->ulsch_tc_intl2_stats,
+                                            &ulsch_harq->abort_decode);
 }
 
-int ulsch_decoding_data(PHY_VARS_eNB *eNB, L1_rxtx_proc_t *proc,
-			int UE_id,int harq_pid,int llr8_flag) {
+/*!
+  \brief Decoding of ULSCH data component from 36-212. This one is single thread.
+  @param phy_vars_eNB Pointer to eNB top-level descriptor
+  @param UE_id ID of UE transmitting this PUSCH
+  @param harq_pid HARQ process ID
+  @param llr8_flag If 1, indicate that the 8-bit turbo decoder should be used
+  @returns 0 on success
+*/
+
+static int ulsch_decoding_data(PHY_VARS_eNB *eNB, L1_rxtx_proc_t *proc, int UE_id, int harq_pid, int llr8_flag)
+{
   unsigned int r_offset=0;
   int offset = 0;
   LTE_eNB_ULSCH_t *ulsch = eNB->ulsch[UE_id];
@@ -298,7 +308,7 @@ int ulsch_decoding_data(PHY_VARS_eNB *eNB, L1_rxtx_proc_t *proc,
   decoder_if_t * td=llr8_flag == 0 ?
     *decoder16 : *decoder8;
   ulsch_harq->processedSegments=0;
-  
+  set_abort(&ulsch_harq->abort_decode, false);
   for (int r=0; r<ulsch_harq->C; r++) {
     //    printf("before subblock deinterleaving c[%d] = %p\n",r,ulsch_harq->c[r]);
     // Get Turbo interleaver parameters
@@ -321,12 +331,6 @@ int ulsch_decoding_data(PHY_VARS_eNB *eNB, L1_rxtx_proc_t *proc,
     else
       E = ulsch_harq->Qm * ((GpmodC==0?0:1) + (Gp/ulsch_harq->C));
     
-    if ( split73 == SPLIT73_DU ) {
-      sendFs6Ul(eNB, UE_id, harq_pid, r, ulsch_harq->eUL+r_offset, E*sizeof(int16_t), r_offset);
-      r_offset += E;
-      continue;
-    }
-
     union turboReqUnion id= {.s={ulsch->rnti,proc->frame_rx,proc->subframe_rx,0,0}};
     notifiedFIFO_elt_t *req=newNotifiedFIFO_elt(sizeof(turboDecode_t),
                                                 id.p,

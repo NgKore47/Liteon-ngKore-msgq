@@ -101,6 +101,12 @@ SystemInformationBlockType1_nr_t;
 
 #define FRAME_DURATION_MICRO_SEC           (10000)  /* frame duration in microsecond */
 
+enum nr_Link {
+  link_type_dl,
+  link_type_ul,
+  link_type_sl,
+};
+
 typedef enum {
   ms0p5    = 500,                 /* duration is given in microsecond */
   ms0p625  = 625,
@@ -139,7 +145,7 @@ typedef struct TDD_UL_DL_configCommon_s {
   struct TDD_UL_DL_configCommon_s *p_next;
 } TDD_UL_DL_configCommon_t;
 
-typedef struct {
+typedef struct TDD_UL_DL_SlotConfig_s {
   /// \ Identifies a slot within a dl-UL-TransmissionPeriodicity (given in tdd-UL-DL-configurationCommon)
   uint16_t slotIndex;
   /// \ The direction (downlink or uplink) for the symbols in this slot. "allDownlink" indicates that all symbols in this slot are used
@@ -154,7 +160,7 @@ typedef struct {
   /// Corresponds to L1 parameter 'number-of-UL-symbols-dedicated' (see 38.211, section FFS_Section)
   uint16_t nrofUplinkSymbols;
   /// \ for setting a sequence
-  struct TDD_UL_DL_SlotConfig_t *p_next_TDD_UL_DL_SlotConfig;
+  struct TDD_UL_DL_SlotConfig_s *p_next_TDD_UL_DL_SlotConfig;
 } TDD_UL_DL_SlotConfig_t;
 
 /***********************************************************************
@@ -210,12 +216,6 @@ typedef enum {
   srs_sl1280 = 15,
   srs_sl2560 = 16
 } SRS_Periodicity_t;
-
-#define NB_SRS_PERIOD         (18)
-
-static const uint16_t srs_period[NB_SRS_PERIOD]
-= { 0, 1, 2, 4, 5, 8, 10, 16, 20, 32, 40, 64, 80, 160, 320, 640, 1280, 2560}
-;
 
 /// SRS_Resource of SRS_Config information element from 38.331 RRC specifications
 typedef struct {

@@ -122,7 +122,7 @@ void nr_ue_ulsch_procedures(PHY_VARS_NR_UE *UE,
   int sample_offsetF, N_RE_prime;
 
   NR_DL_FRAME_PARMS *frame_parms = &UE->frame_parms;
-  int32_t **txdataF = UE->common_vars.txdataF;
+  c16_t **txdataF = UE->common_vars.txdataF;
 
   int      N_PRB_oh = 0; // higher layer (RRC) parameter xOverhead in PUSCH-ServingCellConfig
   uint16_t number_dmrs_symbols = 0;
@@ -312,7 +312,7 @@ void nr_ue_ulsch_procedures(PHY_VARS_NR_UE *UE,
       LOG_D(PHY,"Transform precoding being done on data- symbol: %d, nb_re_pusch: %d, y_offset: %d\n", l, nb_re_pusch, y_offset);
 
 #ifdef DEBUG_PUSCH_MAPPING
-      printf("NR_ULSCH_UE: y_offset %d\t nb_re_pusch %d \t Symbol %d \t nb_rb %d \n",
+      printf("NR_ULSCH_UE: y_offset %u\t nb_re_pusch %u \t Symbol %d \t nb_rb %d \n",
              y_offset, nb_re_pusch, l, nb_rb);
 #endif
     }
@@ -320,7 +320,7 @@ void nr_ue_ulsch_procedures(PHY_VARS_NR_UE *UE,
 #ifdef DEBUG_DFT_IDFT
     int32_t debug_symbols[MAX_NUM_NR_RE] __attribute__ ((aligned(16)));
     int offset = 0;
-    printf("NR_ULSCH_UE: available_bits: %d, mod_order: %d", available_bits,mod_order);
+    printf("NR_ULSCH_UE: available_bits: %u, mod_order: %d", available_bits,mod_order);
 
     for (int ll = 0; ll < (available_bits/mod_order); ll++) {
         debug_symbols[ll] = ulsch_ue->y[ll];     
@@ -530,7 +530,7 @@ void nr_ue_ulsch_procedures(PHY_VARS_NR_UE *UE,
         }
         else {
           //get the precoding matrix weights:
-          char *W_prec;
+          const char *W_prec;
           switch (frame_parms->nb_antennas_tx) {
             case 1://1 antenna port
               W_prec = nr_W_1l_2p[pmi][ap];
@@ -592,16 +592,12 @@ void nr_ue_ulsch_procedures(PHY_VARS_NR_UE *UE,
 uint8_t nr_ue_pusch_common_procedures(PHY_VARS_NR_UE *UE,
                                       uint8_t slot,
                                       NR_DL_FRAME_PARMS *frame_parms,
-                                      uint8_t n_antenna_ports) {
-
-  int tx_offset, ap;
-  int32_t **txdata;
-  int32_t **txdataF;
-
+                                      uint8_t n_antenna_ports)
+{
   /////////////////////////IFFT///////////////////////
   ///////////
 
-  tx_offset = frame_parms->get_samples_slot_timestamp(slot, frame_parms, 0);
+  int tx_offset = frame_parms->get_samples_slot_timestamp(slot, frame_parms, 0);
 
   // clear the transmit data array for the current subframe
   /*for (int aa=0; aa<UE->frame_parms.nb_antennas_tx; aa++) {
@@ -610,41 +606,23 @@ uint8_t nr_ue_pusch_common_procedures(PHY_VARS_NR_UE *UE,
   }*/
 
 
-  txdata = UE->common_vars.txdata;
-  txdataF = UE->common_vars.txdataF;
+  c16_t **txdata = UE->common_vars.txdata;
+  c16_t **txdataF = UE->common_vars.txdataF;
 
-  int symb_offset = (slot%frame_parms->slots_per_subframe)*frame_parms->symbols_per_slot;
-  for(ap = 0; ap < n_antenna_ports; ap++) {
-    for (int s=0;s<NR_NUMBER_OF_SYMBOLS_PER_SLOT;s++){
-      c16_t *this_symbol = (c16_t *)&txdataF[ap][frame_parms->ofdm_symbol_size * s];
-      c16_t rot=frame_parms->symbol_rotation[1][s + symb_offset];
-      LOG_D(PHY,"rotating txdataF symbol %d (%d) => (%d.%d)\n",
-	    s,
-	    s + symb_offset,
-	    rot.r, rot.i);
-
-      if (frame_parms->N_RB_UL & 1) {
-        rotate_cpx_vector(this_symbol, &rot, this_symbol,
-                          (frame_parms->N_RB_UL + 1) * 6, 15);
-        rotate_cpx_vector(this_symbol + frame_parms->first_carrier_offset - 6,
-                          &rot,
-                          this_symbol + frame_parms->first_carrier_offset - 6,
-                          (frame_parms->N_RB_UL + 1) * 6, 15);
-      } else {
-        rotate_cpx_vector(this_symbol, &rot, this_symbol,
-                          frame_parms->N_RB_UL * 6, 15);
-        rotate_cpx_vector(this_symbol + frame_parms->first_carrier_offset,
-                          &rot,
-                          this_symbol + frame_parms->first_carrier_offset,
-                          frame_parms->N_RB_UL * 6, 15);
-      }
-    }
+  for(int ap = 0; ap < n_antenna_ports; ap++) {
+    apply_nr_rotation_TX(frame_parms,
+                         txdataF[ap],
+                         frame_parms->symbol_rotation[1],
+                         slot,
+                         frame_parms->N_RB_UL,
+                         0,
+                         NR_NUMBER_OF_SYMBOLS_PER_SLOT);
   }
 
-  for (ap = 0; ap < n_antenna_ports; ap++) {
+  for (int ap = 0; ap < n_antenna_ports; ap++) {
     if (frame_parms->Ncp == 1) { // extended cyclic prefix
-      PHY_ofdm_mod(txdataF[ap],
-                   &txdata[ap][tx_offset],
+      PHY_ofdm_mod((int *)txdataF[ap],
+                   (int *)&txdata[ap][tx_offset],
                    frame_parms->ofdm_symbol_size,
                    12,
                    frame_parms->nb_prefix_samples,
@@ -660,5 +638,17 @@ uint8_t nr_ue_pusch_common_procedures(PHY_VARS_NR_UE *UE,
 
   ///////////
   ////////////////////////////////////////////////////
+  return 0;
+}
+
+int8_t clean_UE_ulsch(PHY_VARS_NR_UE *UE, uint8_t gNB_id)
+{
+  for (int harq_pid = 0; harq_pid < NR_MAX_ULSCH_HARQ_PROCESSES; harq_pid++) {
+    NR_UL_UE_HARQ_t *ul_harq_process = &UE->ul_harq_processes[harq_pid];
+    ul_harq_process->tx_status = NEW_TRANSMISSION_HARQ;
+    ul_harq_process->status = SCH_IDLE;
+    ul_harq_process->round = 0;
+    ul_harq_process->first_tx = 1;
+  }
   return 0;
 }
