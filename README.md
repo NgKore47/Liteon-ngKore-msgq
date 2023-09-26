@@ -220,7 +220,7 @@ sudo yum install guile -y
 sudo yum -y groupinstall "Development Tools"
 sudo yum localinstall ./rhel-packages/gc-devel-7.6.4-3.el8.x86_64.rpm
 sudo yum localinstall ./rhel-packages/guile-devel-2.0.14-7.el8.x86_64.rpm
-sudo yum localinstall ./rhel-packages/libconfig-devel-1.5-9.el8.x86_64.rpm.
+sudo yum localinstall ./rhel-packages/libconfig-devel-1.5-9.el8.x86_64.rpm
 sudo yum localinstall ./rhel-packages/pkgconf-pkg-config-1.4.2-1.el8.x86_64.rpm
 sudo yum localinstall ./rhel-packages/blas-devel-3.8.0-8.el8.x86_64.rpm
 sudo yum localinstall ./rhel-packages/lapack-devel-3.8.0-8.el8.x86_64.rpm
